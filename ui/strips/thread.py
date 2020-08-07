@@ -48,12 +48,12 @@ class IterativeBackgroundTask:
         try:
             self.log.info("New thread spawned")
             self.task_function(self.__progress_listener)
-
-            with self.lock:
-                self.__finished = True
-            self.log.info("Thread finished")
         except Exception as e:
             logging.exception("Error in processing task function")
+
+        with self.lock:
+            self.__finished = True
+        self.log.info("Thread finished")
 
     def __progress_listener(self, index, total):
         self.log.debug("Thread update state: [" + str(index) + ", " + str(total) + "]")
@@ -91,10 +91,12 @@ class BackgroundCallableTask:
             self.frame.after(500, self.__update_in_main_thread)
 
     def __run_function(self):
+        result = None
         try:
             result = self.callable()
-            with self.lock:
-                self.result = result
-                self.__finished = True
         except Exception as e:
             logging.exception("Error in processing callable")
+
+        with self.lock:
+            self.result = result
+            self.__finished = True

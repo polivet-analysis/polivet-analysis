@@ -66,25 +66,34 @@ class Analytics:
 
     def get_all_trajectories_fig(self):
         with self.plt_lock:
-            plt.figure(figsize=(16, 9), dpi=300)
-            plot = tp.plot_traj(self.trajectories)
-            return trackpy_fig_to_pil(plot)
+            fig = plt.figure(figsize=(16, 9), dpi=300)
+            ax = fig.add_subplot(1, 1, 1)
+            plot = tp.plot_traj(self.trajectories, ax=ax)
+            plot_pil_image = trackpy_fig_to_pil(plot)
+            plt.close(fig)
+            return plot_pil_image
 
     def get_x_displacement_fig(self):
         with self.plt_lock:
-            plt.figure(dpi=300)
-            plt.hist(self.disp_x, 100)
-            plt.title('X displacement')
-            plt.yscale('log')
-            return current_plt_to_fig()
+            fig = plt.figure(dpi=300)
+            ax = fig.add_subplot(1, 1, 1)
+            ax.hist(self.disp_x, 100)
+            ax.set_title('X displacement')
+            ax.set_yscale('log')
+            plot_pil_image = current_plt_to_fig()
+            plt.close(fig)
+            return plot_pil_image
 
     def get_y_displacement_fig(self):
         with self.plt_lock:
-            plt.figure(dpi=300)
-            plt.hist(self.disp_y, 100)
-            plt.title('Y displacement')
-            plt.yscale('log')
-            return current_plt_to_fig()
+            fig = plt.figure(dpi=300)
+            ax = fig.add_subplot(1, 1, 1)
+            ax.hist(self.disp_y, 100)
+            ax.set_title('Y displacement')
+            ax.set_yscale('log')
+            plot_pil_image = current_plt_to_fig()
+            plt.close(fig)
+            return plot_pil_image
 
     def get_trajectory_stat_fig(self):
         track = self.__get_single_trajectory()
@@ -96,35 +105,41 @@ class Analytics:
         coeff = np.polyfit(x, y, 1)
         y_approx = coeff[0] * x + coeff[1]
         with self.plt_lock:
-            plt.figure(dpi=300)
-            plt.plot(x, y, label='single track')
-            plt.plot(x, y_approx, label='linear approximation')
-            plt.gca().invert_yaxis()
-            plt.xlabel('x [px]')
-            plt.ylabel('y [px]')
-            plt.legend(frameon=False)
-            plt.text(901, 30, "Average x displacement: %.4f px/fm" % (x_velocity))
-            plt.text(901, 30.5, "Average y displacement: %.4f px/fm" % (y_velocity))
-            plt.axes([.18, .18, .23, .23])
+            fig = plt.figure(dpi=300)
+            ax = fig.add_subplot(1, 1, 1)
+            ax.plot(x, y, label='single track')
+            ax.plot(x, y_approx, label='linear approximation')
+            ax.invert_yaxis()
+            ax.set_xlabel('x [px]')
+            ax.set_ylabel('y [px]')
+            ax.legend(frameon=False)
+            ax.text(901, 30, "Average x displacement: %.4f px/fm" % (x_velocity))
+            ax.text(901, 30.5, "Average y displacement: %.4f px/fm" % (y_velocity))
+            subax = fig.add_axes([.18, .18, .23, .23])
 
             squared_displacements = []
             a = coeff[0]
             for i in range(len(x)):
                 disp = (1 / (1 + a ** 2)) * ((y[i] - y_approx[i]) ** 2) / len(x)
                 squared_displacements.append(disp)
-            plt.title('MSD')
-            plt.hist(squared_displacements, 100)
-            return current_plt_to_fig()
+            subax.set_title('MSD')
+            subax.hist(squared_displacements, 100)
+            plot_pil_image = current_plt_to_fig()
+            plt.close(fig)
+            return plot_pil_image
 
     def get_msd_for_particles_fig(self):
         im = tp.imsd(self.filtered, 1, 1)
         with self.plt_lock:
-            plt.figure(figsize=(16, 9), dpi=300)
-            plt.plot(im.index, im, 'k-', alpha=0.1)
-            plt.xscale('log')
-            plt.yscale('log')
-            plt.title("Mean squared displacement for each particle")
-            return current_plt_to_fig()
+            fig = plt.figure(figsize=(16, 9), dpi=300)
+            ax = fig.add_subplot(1, 1, 1)
+            ax.plot(im.index, im, 'k-', alpha=0.1)
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+            ax.set_title("Mean squared displacement for each particle")
+            plot_pil_image = current_plt_to_fig()
+            plt.close(fig)
+            return plot_pil_image
 
     def __frame_track_iterator(self, track, frames):
         for i, r in track.iterrows():
@@ -135,10 +150,13 @@ class Analytics:
         track = self.__get_single_trajectory()
 
         for frame, feature in self.__frame_track_iterator(track, frames):
-            plt.figure()
-            plt.axis('off')
-            annotated = tp.annotate(feature, frame)
-            yield trackpy_fig_to_pil(annotated)
+            with self.plt_lock:
+                fig = plt.figure()
+                ax = fig.add_subplot(1, 1, 1)
+                ax.axis('off')
+                annotated = tp.annotate(feature, frame, ax=ax)
+                yield trackpy_fig_to_pil(annotated)
+                plt.close(fig)
 
     def particle_rotating_frames(self, frames, width=200, height=200):
         track = self.__get_single_trajectory()

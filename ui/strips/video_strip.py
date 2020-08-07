@@ -2,6 +2,7 @@ import logging
 from tkinter import *
 from .progress_bar import ProgressBar
 from tkinter.filedialog import asksaveasfilename
+from .thread import IterativeBackgroundTask
 
 
 class Strip:
@@ -67,9 +68,11 @@ class Strip:
         if filename is not None and filename:
             self.freeze()
             self.init_p_bar()
-            self.model.start_save_movement_video_process(filename, self.p_bar.set_progress)
-            self.p_bar.finish()
-            self.unfreeze()
+
+            def action(listener): self.model.start_save_movement_video_process(filename, listener)
+
+            task = IterativeBackgroundTask(self.frame, action, self.p_bar.set_progress, self.finish_saving_process)
+            task.start()
 
     def save_rotation_video(self):
         if self.button_rotation['state'] == DISABLED: return
@@ -78,9 +81,15 @@ class Strip:
         if filename is not None and filename:
             self.freeze()
             self.init_p_bar()
-            self.model.start_save_rotation_video_process(filename, self.p_bar.set_progress)
-            self.p_bar.finish()
-            self.unfreeze()
+
+            def action(listener): self.model.start_save_rotation_video_process(filename, listener)
+
+            task = IterativeBackgroundTask(self.frame, action, self.p_bar.set_progress, self.finish_saving_process)
+            task.start()
+
+    def finish_saving_process(self):
+        self.p_bar.finish()
+        self.unfreeze()
 
     def freeze(self):
         self.button_movement['state'] = DISABLED

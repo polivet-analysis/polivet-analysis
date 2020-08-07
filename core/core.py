@@ -21,6 +21,7 @@ class Core:
         self.video_filename = None
         self.video_loader = None
         self.frames_count = None
+        self.video_sample = None
 
         self.tracker = None
         self.tracker_sample = None
@@ -47,6 +48,9 @@ class Core:
         self.contrast = contrast
 
     def sample_frame_from_video(self):
+        if self.video_sample is not None:
+            return self.video_sample
+
         if self.video_loader is None:
             raise Exception("Wrong model state: video filename not set")
 
@@ -54,6 +58,7 @@ class Core:
         sample_frame = next(preprocess.apply_grayscale([sample_frame]))
         sample_frame = next(preprocess.apply_contrast([sample_frame],
                                                       self.contrast, self.brightness))
+        self.video_sample = sample_frame
         return sample_frame
 
     def get_frames_count(self):
@@ -89,6 +94,10 @@ class Core:
         self.frames_count = self.get_frames_count()
         wrapped = progress_wrapper(contrast, self.frames_count)
         storage.store_arrays_in_file(FRAMES_FILENAME, wrapped)
+
+        self.sample_frame_from_video()
+        self.video_loader.close()
+        self.video_loader = None
 
     def create_tracker(self):
         self.tracker = Tracker()
@@ -142,7 +151,8 @@ class Core:
         return trajectory_length(DATASET_FILENAME, self.particle_index)
 
     def create_analytics(self):
-        self.analytics = Analytics(DATASET_FILENAME, self.particle_index)
+        if self.analytics is None:
+            self.analytics = Analytics(DATASET_FILENAME, self.particle_index)
         return self.analytics
 
     def get_analytics(self):

@@ -36,6 +36,10 @@ class VideoLoader:
     def get_frames_count(self):
         return int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
 
+    def close(self):
+        self.video.release()
+        cv2.destroyAllWindows()
+
 
 class VideoSaver:
     def __init__(self, filename):

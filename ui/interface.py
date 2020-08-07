@@ -22,7 +22,7 @@ class MainInterface:
 
         self.root_frame = Tk()
         self.root_frame.title('Particle analysis')
-        #self.root_frame.geometry('1024x576')
+        # self.root_frame.geometry('1024x576')
         self.root_frame.geometry('1024x1024')
         self.root_frame.configure(background=self.color_scheme.background_neutral)
 
@@ -98,6 +98,7 @@ class MainInterface:
         if self.video_preview_layer is not None:
             self.video_preview_layer.detach()
 
+        self.model.create_analytics()
         self.video_preview_layer = ui.strips.video_strip.Strip(1480, 70,
                                                                self.color_scheme,
                                                                self.model)
