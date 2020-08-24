@@ -240,6 +240,7 @@ class Strip:
     def __finish_link_process(self):
         self.p_bar.finish()
         self.continue_callback()
+        self.unfreeze_interface()
 
     def __check_diameter_value(self, value):
         return value + 1 if value % 2 == 0 else value
@@ -276,3 +277,11 @@ class Strip:
         self.minmass_slider['state'] = DISABLED
         self.history_slider['state'] = DISABLED
         self.search_range_slider['state'] = DISABLED
+
+    def unfreeze_interface(self):
+        self.update_button['state'] = NORMAL
+        self.continue_button['state'] = NORMAL
+        self.diameter_slider['state'] = NORMAL
+        self.minmass_slider['state'] = NORMAL
+        self.history_slider['state'] = NORMAL
+        self.search_range_slider['state'] = NORMAL

@@ -15,9 +15,10 @@ class Tracker:
 
     def get_annotated_image(self, frame, features, highlight_index=None):
         self.log.debug("Annotating image with features")
-        plt.figure()
-        plt.axis('off')
-        annotated = trackpy.annotate(features, frame)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax.axis('off')
+        annotated = trackpy.annotate(features, frame, ax=ax)
 
         if highlight_index is not None:
             single = features.iloc[highlight_index]
@@ -28,6 +29,7 @@ class Tracker:
         buffer = io.BytesIO()
         figure.savefig(buffer, format='png', bbox_inches='tight')
         buffer.seek(0)
+        plt.close(figure)
         return Image.open(buffer)
 
     def locate_particles(self, frames, diameter, minmass, filename='data.h5',

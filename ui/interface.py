@@ -54,6 +54,7 @@ class MainInterface:
         self.title_strip.create_layer(self.main_container)
         self.title_strip.set_continue_callback(self.__open_video_load_frame)
 
+        self.particle_choose_layer = None
         self.video_preview_layer = None
         self.analytics_frame = None
 
@@ -85,6 +86,16 @@ class MainInterface:
 
     def __open_particle_choose_layer(self):
         self.log.info("Opening particle choose layer")
+        if self.particle_choose_layer is not None:
+            self.particle_choose_layer.detach()
+            self.particle_choose_layer = None
+        if self.video_preview_layer is not None:
+            self.video_preview_layer.detach()
+            self.video_preview_layer = None
+        if self.analytics_frame is not None:
+            self.analytics_frame.detach()
+            self.analytics_frame = None
+
         self.particle_choose_layer = ui.strips.particle_choose_strip.Strip(1080, 400,
                                                                            self.color_scheme,
                                                                            self.model)
@@ -97,6 +108,7 @@ class MainInterface:
         self.log.info("Opening video preview layer")
         if self.video_preview_layer is not None:
             self.video_preview_layer.detach()
+            self.video_preview_layer = None
 
         self.model.create_analytics()
         self.video_preview_layer = ui.strips.video_strip.Strip(1480, 70,
@@ -110,6 +122,7 @@ class MainInterface:
         self.log.info("Opening analysis layer")
         if self.analytics_frame is not None:
             self.analytics_frame.detach()
+            self.analytics_frame = None
 
         self.model.create_analytics()
         self.analytics_frame = ui.strips.analytics_strip.Strip(1600, 1550,

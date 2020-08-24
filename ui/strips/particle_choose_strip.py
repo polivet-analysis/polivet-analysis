@@ -93,6 +93,10 @@ class Strip:
             self.track_length_label.config(text='Длина траектории: ' + str(track_length))
         self.canvas.bind("<Button-1>", on_canvas_click)
 
+    def detach(self):
+        self.frame.place_forget()
+        self.frame.destroy()
+
 
 class SizeCoordsScale:
     def __init__(self, original, target):

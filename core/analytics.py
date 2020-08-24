@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 
+MAX_NUMBER_OF_TRAJECTORIES = 200_000
+
+
 def trackpy_fig_to_pil(plot):
     fig = plot.get_figure()
     buffer = io.BytesIO()
@@ -40,8 +43,7 @@ class Analytics:
 
         with tp.PandasHDFStore(filename) as store:
             self.trajectories = pd.concat(iter(store))
-            # self.filtered = tp.filter_stubs(self.trajectories)
-            self.filtered = self.trajectories
+            self.filtered = tp.filter_stubs(self.trajectories, threshold=100)
             self.drift = tp.compute_drift(self.filtered)
 
         self.disp_x = []
@@ -53,10 +55,10 @@ class Analytics:
 
     def __get_single_trajectory(self):
         if self.particle_id is not None:
-            df = self.filtered.reset_index(drop=True)
+            df = self.trajectories.reset_index(drop=True)
             return df.loc[df['particle'] == self.particle_id]
 
-        grouped = self.filtered.reset_index(drop=True).groupby('particle')
+        grouped = self.trajectories.reset_index(drop=True).groupby('particle')
         frame, track = next(iter(grouped))
         return track
 
@@ -68,8 +70,9 @@ class Analytics:
         with self.plt_lock:
             fig = plt.figure(figsize=(16, 9), dpi=300)
             ax = fig.add_subplot(1, 1, 1)
-            plot = tp.plot_traj(self.trajectories, ax=ax)
+            plot = tp.plot_traj(self.filtered[:MAX_NUMBER_OF_TRAJECTORIES], ax=ax)
             plot_pil_image = trackpy_fig_to_pil(plot)
+            fig.clear()
             plt.close(fig)
             return plot_pil_image
 
@@ -81,6 +84,7 @@ class Analytics:
             ax.set_title('X displacement')
             ax.set_yscale('log')
             plot_pil_image = current_plt_to_fig()
+            fig.clear()
             plt.close(fig)
             return plot_pil_image
 
@@ -92,6 +96,7 @@ class Analytics:
             ax.set_title('Y displacement')
             ax.set_yscale('log')
             plot_pil_image = current_plt_to_fig()
+            fig.clear()
             plt.close(fig)
             return plot_pil_image
 
@@ -125,12 +130,13 @@ class Analytics:
             subax.set_title('MSD')
             subax.hist(squared_displacements, 100)
             plot_pil_image = current_plt_to_fig()
+            fig.clear()
             plt.close(fig)
             return plot_pil_image
 
     def get_msd_for_particles_fig(self):
-        im = tp.imsd(self.filtered, 1, 1)
         with self.plt_lock:
+            im = tp.imsd(self.filtered, 1, 1)
             fig = plt.figure(figsize=(16, 9), dpi=300)
             ax = fig.add_subplot(1, 1, 1)
             ax.plot(im.index, im, 'k-', alpha=0.1)
@@ -138,13 +144,17 @@ class Analytics:
             ax.set_yscale('log')
             ax.set_title("Mean squared displacement for each particle")
             plot_pil_image = current_plt_to_fig()
+            fig.clear()
             plt.close(fig)
             return plot_pil_image
 
     def __frame_track_iterator(self, track, frames):
         for i, r in track.iterrows():
-            f = next(frames)
-            yield f, r
+            try:
+                f = next(frames)
+                yield f, r
+            except StopIteration:
+                return
 
     def particle_movement_frames(self, frames):
         track = self.__get_single_trajectory()
@@ -156,6 +166,7 @@ class Analytics:
                 ax.axis('off')
                 annotated = tp.annotate(feature, frame, ax=ax)
                 yield trackpy_fig_to_pil(annotated)
+                fig.clear()
                 plt.close(fig)
 
     def particle_rotating_frames(self, frames, width=200, height=200):
