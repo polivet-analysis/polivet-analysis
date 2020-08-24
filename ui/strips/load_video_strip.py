@@ -111,14 +111,19 @@ class Strip:
         self.log.debug("Frame created")
         return self
 
-    def __update_preview_canvas(self, b=-300, c=4.0):
-        self.log.debug('Update')
+    def __update_preview_canvas(self, b=None, c=None):
+        if b is None:
+            b = self.model.brightness
+        if c is None:
+            c = self.model.contrast
+        self.log.debug('Update [%s, %s]', str(b), str(c))
+
         self.preview_image = self.__get_sample_image(b, c)
         self.preview_canvas.create_image(0, 0, anchor=NW, image=self.preview_image)
 
     def __get_sample_image(self, brightness, contrast):
         self.model.set_brightness_contrast(float(brightness), float(contrast))
-        cv2_image = self.model.sample_frame_from_video()
+        cv2_image = self.model.sample_frame_from_video(update=True)
         pil_image = Image.fromarray(cv2_image)
         pil_image = resize_keep_ratio(pil_image, 200)
         self.preview_canvas.config(width=pil_image.size[0])

@@ -47,13 +47,14 @@ class Core:
         self.brightness = brightness
         self.contrast = contrast
 
-    def sample_frame_from_video(self):
-        if self.video_sample is not None:
+    def sample_frame_from_video(self, update=False):
+        if self.video_sample is not None and not update:
             return self.video_sample
 
         if self.video_loader is None:
             raise Exception("Wrong model state: video filename not set")
 
+        self.log.debug('Getting sample from video [%s, %s]', str(self.brightness), str(self.contrast))
         sample_frame = self.video_loader.get_sample_frame()
         sample_frame = next(preprocess.apply_grayscale([sample_frame]))
         sample_frame = next(preprocess.apply_contrast([sample_frame],
