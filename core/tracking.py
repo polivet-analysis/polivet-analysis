@@ -35,7 +35,7 @@ class Tracker:
     def locate_particles(self, frames, diameter, minmass, filename='data.h5',
                          progress_listener=lambda *args: None):
         self.log.info('Starting particle tracking to file: ' + filename)
-        with trackpy.PandasHDFStore(filename, t_column='frame') as s:
+        with trackpy.PandasHDFStore(filename, t_column='frame', mode='w') as s:
             for i, image in enumerate(frames):
                 features = self.locate_on_frame(image, diameter, minmass)
                 features['frame'] = i
