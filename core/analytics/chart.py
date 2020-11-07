@@ -145,12 +145,16 @@ class SingleTrajectoryStat(Chart):
 
 class MSD(Chart):
     def get_chart(self, data):
+        """ The logarithmic format of the graph was disabled as requested.
+        If it is needed to return place this:
+            - ax.set_xscale('log')
+            - ax.set_yscale('log')
+        """
+
         im = tp.imsd(data.filtered, 1, 1)
         fig = plt.figure(figsize=(16, 9), dpi=300)
         ax = fig.add_subplot(1, 1, 1)
         ax.plot(im.index, im, 'k-', alpha=0.1)
-        ax.set_xscale('log')
-        ax.set_yscale('log')
         ax.set_title("Mean squared displacement for each particle")
         plot_pil_image = current_plt_to_fig()
         fig.clear()
