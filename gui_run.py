@@ -7,6 +7,7 @@ LOG_DIRECTORY = 'log'
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
+logging.getLogger("matplotlib").setLevel(logging.WARNING)
 
 formatter = logging.Formatter('%(asctime)s - %(levelname).5s - %(name)s - %(message)s')
 

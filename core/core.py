@@ -5,8 +5,8 @@ from core.video import VideoSaver
 import core.preprocessing as preprocess
 import core.storage as storage
 from core.tracking import Tracker
-from core.analytics import Analytics
-from core.analytics import trajectory_length
+from core.analytics.analytics import Analytics
+from core.analytics.analytics import trajectory_length
 
 TEMP_DIRECTORY = 'temp'
 FRAMES_FILENAME = TEMP_DIRECTORY + '/' + 'frames.h5'
