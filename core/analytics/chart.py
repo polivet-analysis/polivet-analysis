@@ -24,7 +24,7 @@ def current_plt_to_fig():
 class ChartData:
     def __init__(self, trajectories_dataframe, particle_id=None):
         self.trajectories = trajectories_dataframe
-        self.filtered = tp.filter_stubs(self.trajectories, threshold=100)
+        self.filtered = self.__filter_trajectories()
         self.drift = tp.compute_drift(self.filtered)
 
         self.disp_x = []
@@ -47,6 +47,20 @@ class ChartData:
         grouped = self.trajectories.reset_index(drop=True).groupby('particle')
         frame, track = next(iter(grouped))
         return track
+
+    def __filter_trajectories(self):
+        """ Filtering small trajectories. If trajectory is bigger than
+        the value it will be removed from the set """
+
+        filtered = tp.filter_stubs(self.trajectories, threshold=25)
+        if len(filtered) > 50:
+            """ For the case when there are a few trajectories we will return
+            unchanged dataset. Because it will be affect the results. In case
+            when there are a lot of tracks, we will remove the smaller ones
+            to make the statistics more clean """
+            return filtered
+
+        return self.trajectories
 
 
 class Chart(ABC):
