@@ -1,7 +1,7 @@
 numpy
 scipy
 trackpy
-cx_Freeze
+cx_Freeze==6.4
 tk
 opencv-python
 h5py
