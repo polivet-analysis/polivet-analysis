@@ -1,4 +1,5 @@
 import setuptools
+import sys
 import os
 import scipy
 import trackpy
@@ -15,6 +16,10 @@ include_files = [os.path.dirname(scipy.__file__),
 excludes = ["matplotlib.tests", "numpy.random._examples"]
 packages = []
 
+base = None
+if sys.platform == "win32":
+    base = 'Win32GUI'
+
 setup(
     name="polivet-analysis",
     description='Description',
@@ -24,5 +29,5 @@ setup(
         'include_files': include_files,
         'excludes': excludes
     }},
-    executables=[Executable("gui_run.py", base='Win32GUI')]
+    executables=[Executable("gui_run.py", base=base)]
 )
