@@ -26,7 +26,8 @@ class MainInterface:
         self.root_frame.geometry('1024x1024')
         self.root_frame.configure(background=self.color_scheme.background_neutral)
 
-        self.scroll_canvas = Canvas(self.root_frame, bg=self.color_scheme.background_neutral)
+        self.scroll_canvas = Canvas(self.root_frame, bg=self.color_scheme.background_neutral,
+                                    borderwidth=0, highlightthickness=0)
         self.scroll_canvas.pack(side=LEFT, fill='both', expand=True)
         self.scroll_bar = Scrollbar(self.root_frame, command=self.scroll_canvas.yview)
         self.scroll_bar.pack(side=LEFT, fill='y', expand=False)
@@ -38,7 +39,8 @@ class MainInterface:
                                         1024 / 2,
                                         image=self.lemur_fun, anchor='c')
 
-        self.main_container = Frame(self.scroll_canvas, bg=self.color_scheme.background_neutral)
+        self.main_container = Frame(self.scroll_canvas, bg=self.color_scheme.background_neutral,
+                                    borderwidth=0, highlightthickness=0)
         self.main_container_tag = self.scroll_canvas.create_window((0, 0), window=self.main_container, anchor='nw')
 
         def on_configure(event):

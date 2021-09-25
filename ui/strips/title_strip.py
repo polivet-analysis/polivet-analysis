@@ -21,6 +21,7 @@ class Strip:
     def create_layer(self, outer_frame):
         self.log.info("Creating title frame")
         self.frame = Frame(master=outer_frame, height=self.height,
+                           borderwidth=0, highlightthickness=0,
                            bg=self.color_scheme.background_bright)
         self.frame.place(x=0, y=0, relwidth=1)
 
@@ -30,6 +31,7 @@ class Strip:
         self.description = Text(self.left_frame, height=10,
                                 bg=self.color_scheme.background_neutral,
                                 foreground=self.color_scheme.text,
+                                highlightthickness=0,
                                 borderwidth=0, wrap=WORD,
                                 padx=10, pady=10, spacing2=7)
         self.description.tag_configure("bold", font='Helvetica 14 bold',
