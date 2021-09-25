@@ -57,8 +57,9 @@ class MainInterface:
                                         1024 / 2,
                                         image=self.lemur_fun, anchor='c')
         self.licence_text = Label(self.scroll_canvas, text="The program is distributed under the GNU GPL 3.0 Licence.\n"
-                                                           "Full text of the license available on "
-                                                           "http://github.com/somename/License.txt",
+                                                           "Full text of the license available on\n"
+                                                           "https://github.com/polivet-analysis/polivet-analysis/blob/"
+                                                           "9af49d817de14313bee11d9b244e3c66ef73412a/LICENSE.TXT",
                                   bg=self.color_scheme.background_neutral)
         self.licence_text.config(font=("Helvetica", 10), foreground=self.color_scheme.text_disabled)
         self.licence_text.place(relx=.5, rely=.6, anchor='c')
