@@ -38,6 +38,12 @@ class MainInterface:
         self.scroll_canvas.create_image(1024 / 2,
                                         1024 / 2,
                                         image=self.lemur_fun, anchor='c')
+        self.licence_text = Label(self.scroll_canvas, text="The program is distributed under the GPL Licence.\n"
+                                                           "Full text of the license available on "
+                                                           "http://github.com/somename/License.txt",
+                                  bg=self.color_scheme.background_neutral)
+        self.licence_text.config(font=("Helvetica", 10), foreground=self.color_scheme.text_disabled)
+        self.licence_text.place(relx=.5, rely=.6, anchor='c')
 
         self.main_container = Frame(self.scroll_canvas, bg=self.color_scheme.background_neutral,
                                     borderwidth=0, highlightthickness=0)
