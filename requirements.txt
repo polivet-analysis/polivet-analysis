@@ -1,0 +1,8 @@
+numpy
+scipy
+trackpy
+cx_Freeze
+tk
+opencv-python
+h5py
+matplotlib
