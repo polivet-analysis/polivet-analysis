@@ -51,18 +51,7 @@ class MainInterface:
         self.scroll_bar.pack(side=LEFT, fill='y', expand=False)
         self.scroll_canvas.configure(yscrollcommand=self.scroll_bar.set)
 
-        lemur_image = PilImage.open('resources/misc/lemur.png')
-        self.lemur_fun = ImageTk.PhotoImage(lemur_image)
-        self.scroll_canvas.create_image(1024 / 2,
-                                        1024 / 2,
-                                        image=self.lemur_fun, anchor='c')
-        self.licence_text = Label(self.scroll_canvas, text="The program is distributed under the GNU GPL 3.0 Licence.\n"
-                                                           "Full text of the license available on\n"
-                                                           "https://github.com/polivet-analysis/polivet-analysis/blob/"
-                                                           "9af49d817de14313bee11d9b244e3c66ef73412a/LICENSE.TXT",
-                                  bg=self.color_scheme.background_neutral)
-        self.licence_text.config(font=("Helvetica", 10), foreground=self.color_scheme.text_disabled)
-        self.licence_text.place(relx=.5, rely=.6, anchor='c')
+        self.__create_center_info_frame()
 
         self.main_container = Frame(self.scroll_canvas, bg=self.color_scheme.background_neutral,
                                     borderwidth=0, highlightthickness=0)
@@ -88,6 +77,30 @@ class MainInterface:
     def start(self):
         self.log.info("Starting main loop")
         self.root_frame.mainloop()
+
+    def __create_center_info_frame(self):
+        """ Frame with lemur and license text """
+        self.info_frame = Canvas(self.scroll_canvas, bg=self.color_scheme.background_neutral,
+                                 borderwidth=0, highlightthickness=0)
+        self.info_frame.place(relx=.5, rely=.6, anchor='c', relwidth=1, height=400)
+
+        lemur_image = PilImage.open('resources/misc/lemur.png')
+        self.lemur_fun = ImageTk.PhotoImage(lemur_image)
+        self.info_frame.create_image(512, 400 - 64, image=self.lemur_fun, anchor='s')
+
+        self.description = Text(self.info_frame, height=3,
+                                bg=self.color_scheme.background_neutral,
+                                foreground=self.color_scheme.text,
+                                highlightthickness=0,
+                                borderwidth=0, wrap=WORD,
+                                padx=10, pady=10)
+        self.description.tag_configure("regular", font='Helvetica 9', justify='center')
+        self.description.insert(END, "The program is distributed under the GNU GPL 3.0 License.\n"
+                                     "Full text of the license available on\n"
+                                     "https://github.com/polivet-analysis/polivet-analysis/blob/"
+                                     "9af49d817de14313bee11d9b244e3c66ef73412a/LICENSE.TXT", "regular")
+        self.description.configure(state='disabled')
+        self.description.place(relx=.5, y=400, relwidth=.7, anchor='s')
 
     def __open_video_load_frame(self, filename):
         self.log.info("Opening video load frame '" + filename + "'")
