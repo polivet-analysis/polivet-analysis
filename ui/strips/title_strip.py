@@ -61,6 +61,7 @@ class Strip:
                                      "под микроскопом на основе видео. Чтобы начать работу, "
                                      "откройте видеофайл *.mp4"
                                 , "regular")
+        self.description.configure(state='disabled')
         self.description.place(relx=.5, rely=.48, relwidth=.8, anchor='c')
 
         self.underscore = Canvas(self.left_frame, height=2, borderwidth=0, highlightthickness=0,
