@@ -1,5 +1,5 @@
 #
-#     Copyright (C) 2021  Tatiana Novosadjuk & Victoria Tsvetkova
+#     Copyright (C) 2021  Tatiana Novosadiuk & Viktoriia Tsvetkova
 #
 #     This file is part of Polevet-SPb-2020.
 #

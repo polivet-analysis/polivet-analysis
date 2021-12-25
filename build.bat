@@ -1,5 +1,5 @@
 REM
-REM     Copyright (C) 2021  Tatiana Novosadjuk & Victoria Tsvetkova
+REM     Copyright (C) 2021  Tatiana Novosadiuk & Viktoriia Tsvetkova
 REM
 REM     This file is part of Polevet-SPb-2020.
 REM
